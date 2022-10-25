@@ -1,24 +1,19 @@
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
-import { Keypair, PublicKey, Signer, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import fs from 'fs';
 
 import {
-  getAccount,
+  getAssociatedTokenAddressSync,
   createApproveInstruction
 } from '@solana/spl-token';
 
 import {
   Metaplex, keypairIdentity, bundlrStorage,
-  freezeDelegatedNftBuilder,
-  token,
 } from "@metaplex-foundation/js";
 
 // Where the google secret is stored
 const name = "projects/659029137345/secrets/solana/versions/1";
-
-// The public address of the program owner
-const ownerAddress = "3vX7yTSgWUkDfhcy5hjn1uWteCbDT3KX9nE8ZcTompGD"
 
 // The Solana RPC network
 const network = "https://api.devnet.solana.com";
@@ -46,13 +41,11 @@ const keypair = signer._driver.keypair
 const connection = sdk.connection
 
 // Mint the Glorious NFT Collection
-// const programAddress = await sdk.deployer.createNftCollection({
-//   name: "POMP Beta",
-//   description: "Proof of Membership Protocol aka validation you're a badass ( like we even need that ;) )",
-//   symbol: "POMP"
-// });
-
-const programAddress = 'AEc9Ay38dpBVVEJKubUgTvfTnsN7GuRKiUixuNun41YL';
+const programAddress = await sdk.deployer.createNftCollection({
+  name: "POMP Frozen Beta",
+  description: "Proof of Membership Protocol aka validation you're a badass ( like we even need that ;) )",
+  symbol: "NFT"
+});
 
 // Find the Glorious NFT Collection (oh brother where art thou)
 const nftCollection = await sdk.getNFTCollection(programAddress);
@@ -62,14 +55,14 @@ const publicAddress = "3vX7yTSgWUkDfhcy5hjn1uWteCbDT3KX9nE8ZcTompGD"
 
 // The Metadata for the specific NFT
 const metadata = {
-  name: "Cold 3",
-  description: "Frozen picture",
+  name: "Final Frozen",
+  description: "Actually Frozen",
   image: fs.readFileSync("./images/zach.jpg"),
   symbol: "POMP",
   attributes: [
     {
-      "trait_type": "energy",
-      "value": "immaculate"
+      "trait_type": "frozen",
+      "value": "true"
     }
   ]
 }
@@ -77,12 +70,15 @@ const metadata = {
 // Add an NFT to the "NFT Collection" (or so it calls itself with no NFTs ಠ_ಠ)
 const nft = await nftCollection.mintTo(publicAddress, metadata);
 
+// Get the Token Address of the NFT (This is made from the owner and mint address and is the account delegate)
+const tokenAddress = getAssociatedTokenAddressSync(new PublicKey(nft), keypair.publicKey)
+
 // Print this shit for sanity purposes only
 console.log("Collection deployed to: ", programAddress);
 console.log("Minted nft: ", nft);
 
 // Approve the NFT for freezing
-const approveIx = createApproveInstruction(programAddress, signer.publicKey, signer.publicKey, 1);
+const approveIx = createApproveInstruction(tokenAddress, keypair.publicKey, keypair.publicKey, 1);
 
 // Connect to the metaplex gods (centralized authority, please don't take my NFT from me 🙏)
 const metaplex = Metaplex.make(connection).use(keypairIdentity(keypair)).use(bundlrStorage());
@@ -91,7 +87,7 @@ const metaplex = Metaplex.make(connection).use(keypairIdentity(keypair)).use(bun
 const freezeIxs = metaplex
                   .nfts()
                   .builders()
-                  .freezeDelegatedNft({delegateAuthority: keypair, mintAddress: signer.publicKey})
+                  .freezeDelegatedNft({delegateAuthority: keypair, mintAddress: new PublicKey(nft)})
                   .getInstructions();
 
 // Execute the NFT freezing
@@ -101,16 +97,10 @@ freezeIxs.map((ix) => {
     tx = tx.add(ix);
 });
 
-
-const newKeypair = new Keypair(keypair);
-const Signer newSigner = new Signer(
-console.log(newKeypair)
-
-console.log("pubkey in transaction:", signer.publicKey)
-
-const txId = await sendAndConfirmTransaction(connection, tx, [newKeypair], {
+const txId = await sendAndConfirmTransaction(connection, tx, [keypair], {
   skipPreflight: true,
   commitment: "confirmed",
 });
 
+// Holy shit this works
 console.log("Froze nft in tx:", txId);
