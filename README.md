@@ -1,32 +1,70 @@
-## Solana frontend started kit
+# Introduction to POMP
 
-This template has everything you need to build a web3 app on Solana using the thirdweb SDK.
+POMP (Proof of Membership Protocol) is a **branded and personalized profile photo** that proves a member's affiliation with a community (company, school, club etc.) on the Solana blockchain.
 
-## Getting Started
+> Each POMP is created through a fun onboarding process where a verified member takes a selfie or uploads a photo to layer on a branded image/AR filter tailored to the specific organization.
 
-Create a project using this example:
+POMPs are frozen Non Fungible Tokens (NFTs), which means that **each POMP is unique and cannot be transferred** to anyone else on the blockchain. This enables members to build their reputation and identity on-chain through the communities they are a part of.
 
-```bash
-npx thirdweb create --template next-typescript-solana-starter
-```
+## Why use POMP?
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Community pride and belonging
 
-On `pages/_app.tsx`, you'll find our `ThirdwebProvider` wrapping your app, this is necessary for our hooks to work.
+POMP cultivates a sense of belonging and pride by allowing members to create a branded profile photo that incorporates their identity and acts as a token to celebrate new milestones like joining a new organization.
 
-on `pages/index.tsx`, you'll find an example of a connect wallet button and some hooks.
+### Organic social media marketing
 
-## Learn More
+Since POMPs are designed to be used as profile photos, organizations can organically increase brand awareness and marketing reach on social media through their members’ networks.
 
-To learn more about thirdweb and Next.js, take a look at the following resources:
+### Verification and Access
 
-- [thirdweb React Documentation](https://docs.thirdweb.com/react) - learn about our React SDK.
-- [thirdweb TypeScript Documentation](https://docs.thirdweb.com/typescript) - learn about our JavaScript/TypeScript SDK.
-- [thirdweb Portal](https://docs.thirdweb.com) - check our guides and development resources.
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+Each POMP is a verification of membership which can be used to give gated access to special perks reserved just for the members.
 
-You can check out [the thirdweb GitHub organization](https://github.com/thirdweb-dev) - your feedback and contributions are welcome!
+### Build reputation on-chain
 
-## Join our Discord!
+Each POMP is non-transferable and on-chain, allowing members to build up their reputation and credibility in web3.
 
-For any questions, suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+### Fun Experience
+
+Creating a POMP is a unique way to engage a new or existing member to create a personalized and branded profile photo.
+
+## How POMP works
+
+### For organizations
+
+1. Sign up to get verified as an organization (manual onboarding)
+
+2. Upload a branded POMP (image or AR filter) tailored to your organization
+
+3. Confirm the list of members and verification mechanism to receive the POMP drop
+
+4. Send your organization's unique POMP link to your members
+
+### For Members
+
+1. Click on POMP link from your organization
+
+2. Verify that you are a member (via email authentication, wallet address etc.)
+
+3. Create your personalized POMP by taking a selfie or uploading a photo with the branded filter
+
+4. Mint your POMP and share it on your socials as your profile photo!
+
+## How POMP is built
+
+Each POMP is a frozen NFT built on the solana blockchain.
+
+## Next steps
+
+Beyond the Thirdweb x Solana hackathon, we would like to continue building the following:
+
+- Integrate AR filters
+- Create an onboarding process for organizations to integrate/share their members' list for verification
+- Integrate dynamic NFTs that allow for updates to the original POMP to reflect member milestones
+- Rebrand logo/visual design and build refined UI
+- Conduct usability testing and gain feedback from users
+
+## Authors
+
+- [@spdrstar](https://github.com/spdrstar)
+- [@miyahzhang](https://github.com/miyahzhang)
