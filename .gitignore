@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/standalone-mint-script/node_modules
 /.pnp
 .pnp.js
 
@@ -26,6 +27,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+/standalone-mint-script/.env
 .env
 .env.local
 .env.development.local
@@ -37,6 +39,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
+/standalone-mint-script/yarn.lock
 yarn.lock
 package-lock.json

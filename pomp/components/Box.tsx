@@ -4,7 +4,7 @@ import Webcam from "react-webcam";
 import { Container, Card, Row, Col, Text, Button } from "@nextui-org/react";
 import Image from "next/image"
 import html2canvas from "html2canvas";
-import mergeImages from 'merge-images';
+import mergeImages from '../../standalone-mint-script/node_modules/merge-images/dist/index.umd';
 
 
 export default function Box() {
