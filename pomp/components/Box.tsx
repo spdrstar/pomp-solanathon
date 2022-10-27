@@ -3,6 +3,7 @@ import { useState } from "react";
 import Webcam from "react-webcam";
 import { Container, Card, Row, Col, Text, Button } from "@nextui-org/react";
 import Image from "next/image"
+import html2canvas from "html2canvas";
 
 export default function Box() {
 
@@ -13,6 +14,7 @@ export default function Box() {
   const [buttonText, setButtonText] = useState("Take your POMP")
 
   const webcamRef = React.useRef(null);
+  const captureRef = React.useRef();
 
   const videoConstraints = {
     width: 500,
@@ -52,7 +54,8 @@ export default function Box() {
       }
       setTimeout(function(){
         // Capture and Show Image
-        setImage(webcamRef.current.getScreenshot());
+        //setImage(webcamRef.current.getScreenshot());
+        handleImage();
         setIsSelfieTaken(true);
 
         // Stop Camera
@@ -68,18 +71,42 @@ export default function Box() {
       [webcamRef]
     );
 
+    const handleImage = async () => {
+      const element = captureRef.current;
+      const canvas = await html2canvas(element, {
+        width: 500,
+        height: 500
+      });
+      const data = canvas.toDataURL('image/png');
+      setImage(data);
+      //const link = document.createElement('a');
+
+      // if (typeof link.download === 'string') {
+      //   link.href = data;
+      //   link.download = 'image/png';
+
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   document.body.removeChild(link);
+      // } else {
+      //   window.open(data);
+      // }
+    }
+
   return (
     <Container sm>
       <Card >
         <Card.Body>
-             <Row justify="center" align="center">
-              {camera && <> 
-                <Webcam style={{ borderRadius: "500px", position: "relative" }} audio={false} videoConstraints={videoConstraints} ref={webcamRef} onUserMedia={startCamera} />
-                <div style={{ position: "absolute"  }}>
-                  <Image src="/fincPOMP.svg" alt="POMP overlay" width="500px" height="500px" />
-                </div> </> }
-                {isSelfieTaken && <Image className="image-captured" src={image} width="500px" height="500px"></Image>}
-            </Row>
+          <div ref={captureRef}>
+            <Row justify="center" align="center">
+                {camera && <> 
+                  <Webcam style={{ borderRadius: "500px", position: "relative" }} audio={false} videoConstraints={videoConstraints} ref={webcamRef} onUserMedia={startCamera} />
+                  <div style={{ position: "absolute"  }}>
+                    <Image src="/fincPOMP.png" alt="POMP overlay" width="500px" height="500px" />
+                  </div> </> }
+                  {isSelfieTaken && <Image className="image-captured" src={image} width="500px" height="500px"></Image>}
+              </Row>
+          </div>
         </Card.Body>
         <Row justify="center" align="center">
           <Button disabled={disabled} bordered css={{ px: "$13", width: "1em" }} size="md" onClick={capture}>{buttonText}</Button>
