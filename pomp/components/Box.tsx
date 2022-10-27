@@ -4,6 +4,8 @@ import Webcam from "react-webcam";
 import { Container, Card, Row, Col, Text, Button } from "@nextui-org/react";
 import Image from "next/image"
 import html2canvas from "html2canvas";
+import mergeImages from 'merge-images';
+
 
 export default function Box() {
 
@@ -55,6 +57,7 @@ export default function Box() {
       setTimeout(function(){
         // Capture and Show Image
         //setImage(webcamRef.current.getScreenshot());
+        //setImage(await mergeImages([webcamRef.current.getScreenshot(), '/fincPOMP.png']))
         handleImage();
         setIsSelfieTaken(true);
 
@@ -72,13 +75,17 @@ export default function Box() {
     );
 
     const handleImage = async () => {
-      const element = captureRef.current;
-      const canvas = await html2canvas(element, {
-        width: 500,
-        height: 500
-      });
-      const data = canvas.toDataURL('image/png');
-      setImage(data);
+      
+      const result = await mergeImages([webcamRef.current.getScreenshot(), '/fincPOMP.png'])
+      setImage(result)
+
+      // HTML2Canvas Way
+      // const element = captureRef.current;
+      // const canvas = await html2canvas(element);
+      // const data = canvas.toDataURL('image/png');
+      // setImage(data);
+
+      // Download Image
       //const link = document.createElement('a');
 
       // if (typeof link.download === 'string') {
