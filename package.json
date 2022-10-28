@@ -41,6 +41,8 @@
     "use-image": "^1.1.0"
   },
   "devDependencies": {
+    "@types/formidable": "^2.0.5",
+    "@types/merge-images": "^1.2.1",
     "@types/node": "^18.8.4",
     "@types/react": "^18.0.21",
     "@types/styled-components": "^5.1.26",

@@ -1,21 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
-import NextCors from "nextjs-cors";
 import { IncomingForm } from 'formidable'
 import fs from 'fs'
-import PNG from 'png-js'
 
 import {
   getAssociatedTokenAddressSync,
   createApproveInstruction
 } from '@solana/spl-token';
 
-import { PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { PublicKey, Keypair, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 
 import {
   Metaplex, keypairIdentity, bundlrStorage,
 } from "@metaplex-foundation/js";
+import { extractConstructorParams } from "@thirdweb-dev/sdk";
 
 // Where the google secret is stored
 const name = "projects/659029137345/secrets/solana/versions/1";
@@ -32,7 +31,7 @@ async function accessSecretVersion() {
   });
 
   // Extract the payload as a string.
-  const payload = version.payload.data.toString();
+  const payload = version?.payload?.data?.toString();
 
   return payload;
 }
@@ -42,11 +41,12 @@ async function accessSecretVersion() {
 const mintNFT = async (publicAddress: any, image: any) => {
 
   // Connect to the ThirdWeb SDK
-  const sdk = ThirdwebSDK.fromPrivateKey(network, await accessSecretVersion());
+  const sdk = ThirdwebSDK.fromPrivateKey(network, await accessSecretVersion() || "");
 
   // Get some important shit from ThirdWeb (Thanks bb)
   const signer = sdk.wallet.getSigner()
-  const keypair = signer._driver.keypair
+  //const keypair = signer._driver.keypair
+  const keypair = Keypair.fromSecretKey(signer.secretKey || new Uint8Array)
   const connection = sdk.connection
 
   // Assuming Collection and Metadata for hackathon

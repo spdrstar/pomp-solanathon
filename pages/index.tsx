@@ -2,15 +2,10 @@ import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Box from "../components/Box";
 import Nav from "../components/Nav"
-import Render from "../components/Render";
 import styles from "../styles/Home.module.css";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
-
-const RenderNoSSR = dynamic(() => import("../components/Render"), {
-  ssr: false,
-});
 
 const Home: NextPage = () => {
   // Here's how to get the thirdweb SDK instance
@@ -26,7 +21,6 @@ const Home: NextPage = () => {
       <Nav />
       <div className={styles.container}>
         <Box />
-        {/* <RenderNoSSR /> */}
       </div>
     </>
   );
