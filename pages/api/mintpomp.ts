@@ -3,7 +3,8 @@ import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
 import NextCors from "nextjs-cors";
 import { IncomingForm } from 'formidable'
-import { promises as fs } from 'fs'
+import fs from 'fs'
+import PNG from 'png-js'
 
 import {
   getAssociatedTokenAddressSync,
@@ -49,12 +50,12 @@ const mintNFT = async (publicAddress: any, image: any) => {
   const connection = sdk.connection
 
   // Assuming Collection and Metadata for hackathon
-  const collection = 'BAc42BTKeQqoqpN1ya8e7iuGaiM7o6KoV5HLNty3qn5U'
+  const collection = 'Dp2Dkoma2smN4SXDSgqLvC2QmSDmXyMDZhbpuKmBbWep'
 
   const metadata = {
     name: "Founders Inc Founder",
     description: "Congrats you caffeine addict!",
-    image: image,
+    image: fs.readFileSync(image),
     symbol: "NFT",
     attributes: [
       {
@@ -127,8 +128,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // });
 
   if(req.method === "POST") {
-    //const { publicAddress } = req.body as { publicAddress: string };
-    //const publicAddress = '3vX7yTSgWUkDfhcy5hjn1uWteCbDT3KX9nE8ZcTompGD'
 
     const fData = await new Promise<{ fields: any, files: any }>((resolve, reject) => {
       const form = new IncomingForm({
@@ -142,14 +141,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const publicAddress = fData.fields.publicAddress;
 
-    console.log("fData:", fData)
-
-    const image = await fs.readFile(fData?.files?.photo.filepath, {
-      encoding: 'utf8',
-    })
-
     try {
-      const nft = await mintNFT(publicAddress, image)
+      const nft = await mintNFT(publicAddress, fData?.files?.photo.filepath)
       res.json({ nft });
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });

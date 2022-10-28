@@ -6,9 +6,6 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, module: false, path: false }
     return config
   },
-  future: {
-    webpack5: true,
-  },
 }
 
 module.exports = nextConfig
