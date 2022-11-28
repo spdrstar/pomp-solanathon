@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
+import NextCors from "nextjs-cors";
 import { IncomingForm } from 'formidable'
 import fs from 'fs'
 
@@ -9,12 +10,11 @@ import {
   createApproveInstruction
 } from '@solana/spl-token';
 
-import { PublicKey, Keypair, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 
 import {
-  Metaplex, keypairIdentity, bundlrStorage,
+  Metaplex, keypairIdentity, bundlrStorage, token,
 } from "@metaplex-foundation/js";
-import { extractConstructorParams } from "@thirdweb-dev/sdk";
 
 // Where the google secret is stored
 const name = "projects/659029137345/secrets/solana/versions/1";
@@ -31,7 +31,7 @@ async function accessSecretVersion() {
   });
 
   // Extract the payload as a string.
-  const payload = version?.payload?.data?.toString();
+  const payload = version.payload.data.toString();
 
   return payload;
 }
@@ -41,12 +41,11 @@ async function accessSecretVersion() {
 const mintNFT = async (publicAddress: any, image: any) => {
 
   // Connect to the ThirdWeb SDK
-  const sdk = ThirdwebSDK.fromPrivateKey(network, await accessSecretVersion() || "");
+  const sdk = ThirdwebSDK.fromPrivateKey(network, await accessSecretVersion());
 
   // Get some important shit from ThirdWeb (Thanks bb)
   const signer = sdk.wallet.getSigner()
-  //const keypair = signer._driver.keypair
-  const keypair = Keypair.fromSecretKey(signer.secretKey || new Uint8Array)
+  const keypair = signer._driver.keypair
   const connection = sdk.connection
 
   // Assuming Collection and Metadata for hackathon
@@ -78,12 +77,16 @@ const mintNFT = async (publicAddress: any, image: any) => {
   // Print Mint Address for sanity
   console.log("Minted nft: ", nft);
 
+  const publicKey = new PublicKey(publicAddress)
+
   // Get the Token Address of the NFT (This is made from the owner and mint address and is the account delegate)
-  const tokenAddress = getAssociatedTokenAddressSync(new PublicKey(nft), keypair.publicKey)
+  //const tokenAddress = getAssociatedTokenAddressSync(new PublicKey(nft), keypair.publicKey)
+  const tokenAddress = getAssociatedTokenAddressSync(new PublicKey(nft), publicKey)
 
   // Approve the NFT for freezing
-  const approveIx = createApproveInstruction(tokenAddress, keypair.publicKey, keypair.publicKey, 1);
+  const approveIx = createApproveInstruction(tokenAddress, keypair.publicKey, publicKey, 1);
 
+  console.log(approveIx.programId.toString())
   // Connect to the metaplex gods (centralized authority, please don't take my NFT from me 🙏)
   const metaplex = Metaplex.make(connection).use(keypairIdentity(keypair)).use(bundlrStorage());
 

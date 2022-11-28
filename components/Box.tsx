@@ -122,7 +122,7 @@ export default function Box() {
 
     const mintPOMP = async () => {
       let formdata = new FormData();
-      formdata.append("publicAddress", "3vX7yTSgWUkDfhcy5hjn1uWteCbDT3KX9nE8ZcTompGD");
+      formdata.append("publicAddress", "6nr36TNV8pyDj5UfiBg18spnNvazqsXBott8wVLkZpAE");
       const blob = b64toBlob(image, 'image/png')
       formdata.append("photo", blob, "photo.png");
 
